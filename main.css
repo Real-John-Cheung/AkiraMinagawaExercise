@@ -1,0 +1,99 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@0;1&family=Work+Sans:ital@0;1&display=swap');
+
+body, html{
+    width: 100%;
+}
+
+.blockContainer{
+    width: 80%;
+    min-width: 500px;
+    margin: auto;
+}
+
+.indexTitle{
+    width: 100%;
+    min-width: 500px;
+    margin: auto;
+    font-family: 'Roboto Mono' 
+}
+
+.indexDescription{
+    width: 80%;
+    min-width: 500px;
+    font-family: 'Work San';
+}
+
+.indexLinks{
+    width: 100%;
+    min-width: 500px;
+    margin: auto;
+    padding-top: 5vh;
+    padding-left: 5vw;
+    font-family: 'Roboto Mono';
+    font-size: large;
+}
+
+.sketchTitle{
+    width: 100%;
+    min-width: 500px;
+    margin: auto;
+    font-family: 'Roboto Mono';
+    padding-bottom: 2vh;
+}
+
+.content {
+    width: 100%;
+    min-width: 500px;
+    margin: auto;
+}
+
+.originalImage{
+    width: 50%;
+    min-width: 500px;
+    height: auto;
+}
+
+.originalDescription{
+    width: 100%;
+    min-width: 500px;
+    margin: auto;
+    font-family: 'Work San';
+    font-size: small;
+    color: gray;
+}
+
+.sketchContainer {
+    width: 50%;
+    min-width: 500px;
+    aspect-ratio: 16/10;
+    margin-top: 2vh;
+    margin-bottom: 5px;
+}
+
+.links{
+    margin-top: 2vh;
+    font-size: small;
+    font-family: 'Roboto Mono';
+}
+
+.originalDescription a{
+    color: gray;
+    text-decoration: underline;
+}
+
+.originalDescription a:hover{
+    color: gray;
+    font-weight: 400;
+    text-decoration-thickness: 1.5px;
+}
+
+a{
+    color: black;
+    text-decoration: underline;
+}
+
+a:hover{
+    font-weight: 600;
+    text-decoration-thickness: 3px;
+}
