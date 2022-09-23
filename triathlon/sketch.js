@@ -1,21 +1,20 @@
 let sketch = function (s) { 
     let div = window.document.getElementsByClassName('sketchContainer')[0];
-
-    class Polygon{
-        constructor(side,center) {}
-    }
+    let canvas;
 
     s.setup = function () {
-        s.createCanvas(Utils.elementWidth(div), (Utils.elementWidth(div)/16) * 10);
+        canvas = s.createCanvas(1600, 1000);
         s.background(0);
+        s.frameRate(30);
+        Utils.applyScalling(div, canvas.canvas);
     }
 
     s.draw = function () {
-        
+
     }
 
     s.windowResized = function () {
-        s.resizeCanvas(Utils.elementWidth(div), (Utils.elementWidth(div)/16) * 10);
+        Utils.applyScalling(div, canvas.canvas);
         s.background(0);
     }
     

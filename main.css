@@ -83,7 +83,12 @@ body, html{
     min-width: 500px;
     aspect-ratio: 16/10;
     margin-top: 2vh;
-    margin-bottom: 3px;
+    margin-bottom: 0.5vh;
+    overflow: hidden;
+}
+
+.sketchContainer canvas {
+    transform-origin: 0 0;
 }
 
 .links{

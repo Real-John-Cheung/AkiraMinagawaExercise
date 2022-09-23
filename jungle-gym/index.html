@@ -1,13 +1,17 @@
 <!DOCTYPE html>
+
 <head>
     <meta charset="utf-8">
     <title>Recreating Akira Minagawa - Jungle Gym</title>
     <link rel="stylesheet" href="../main.css">
     <script src="../utils.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js" integrity="sha512-rCZdHNB0AePry6kAnKAVFMRfWPmUXSo+/vlGtrOUvhsxD0Punm/xWbEh+8vppPIOzKB9xnk42yCRZ5MD/jvvjQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"
+        integrity="sha512-rCZdHNB0AePry6kAnKAVFMRfWPmUXSo+/vlGtrOUvhsxD0Punm/xWbEh+8vppPIOzKB9xnk42yCRZ5MD/jvvjQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="./sketch.js"></script>
     <!--above sketch should contain a function call sketch-->
 </head>
+
 <body>
     <div class="blockContainer">
         <div class="sketchTitle">
@@ -18,16 +22,21 @@
             <p class="originalDescription">
                 Akira Minagawa, 2004 S/S <br>
                 dye printing, cupra 95%, silk 5%<br>
-                image retrieved from <a target="_blank" href="https://www.mina-perhonen.jp/textile/0435">https://www.mina-perhonen.jp/textile/0435</a>
+                image retrieved from <a target="_blank"
+                    href="https://www.mina-perhonen.jp/textile/0435">https://www.mina-perhonen.jp/textile/0435</a>
             </p>
             <div class="sketchContainer">
-    
+
             </div>
             <p class="originalDescription">JohnC, 2022</p>
             <p class="links">
-                <a href="../index.html">Back to main</a>&nbsp;&nbsp;<a target="_blank" href="https://johncheung.art">JohnC</a>
+                <a href="../index.html">Back to main</a>&nbsp;&nbsp;<a target="_blank"
+                    href="https://johncheung.art">JohnC</a>
             </p>
         </div>
     </div>
-    <script>new p5(sketch, window.document.getElementsByClassName('sketchContainer')[0])</script>
+    <script>
+        const container = window.document.getElementsByClassName('sketchContainer')[0]
+        let thisP5 = new p5(sketch, container);
+    </script>
 </body>
