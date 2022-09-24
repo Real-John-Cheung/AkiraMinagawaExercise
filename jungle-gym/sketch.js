@@ -224,13 +224,14 @@ let sketch = function (s) {
 
         _initDisplace() {
             let points = [];
-            let factor = s.random(0.003, 0.01);
+            let factorX = s.random(.2, .7);
+            let factorY = s.random(.2, .7);
             let noiseSectionGap = 14400;
             for (let x = -1.5 * this.gridSize; x < 1600 + 1.5 * this.gridSize; x += this.gridSize) {
                 let col = []
                 for (let y = -1.5 * this.gridSize; y < 1000 + 1.5 * this.gridSize; y += this.gridSize) {
-                    let displacedX = x + (s.noise(x * factor) - 0.5) * this.gridSize;
-                    let displacedY = y + (s.noise(y * factor + noiseSectionGap) - 0.5) * this.gridSize;
+                    let displacedX = x + (s.noise(x * factorX) - 0.5) * this.gridSize;
+                    let displacedY = y + (s.noise(y * factorY + noiseSectionGap) - 0.5) * this.gridSize;
                     col.push(new MeshPoint(s.createVector(displacedX, displacedY), this.gridSize));
                 }
                 points.push(col);
