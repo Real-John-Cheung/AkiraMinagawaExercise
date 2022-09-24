@@ -319,7 +319,6 @@ let sketch = function (s) {
             pen.go();
             movedcount++;
         }
-        console.log(movedcount);
         if (movedcount < 1) {
             animationFinished = true;
             s.noLoop();
@@ -336,7 +335,6 @@ let sketch = function (s) {
         if (animationFinished && s.mouseX > 0 && s.mouseX < s.width && s.mouseY > 0 && s.mouseY < s.height) {
             s.background(222, 217, 214);
             s.resetAnimation();
-            console.log("c");
         }
     }
 
