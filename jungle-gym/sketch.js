@@ -101,7 +101,7 @@ let sketch = function (s) {
             let dire = this.direction.copy();
             // pen find target
             let targetPoint = this.mesh.points[this.targetPointIdx[0]][this.targetPointIdx[1]];
-            dire.rotate((s.noise(this.innerPerlinCounter1) - 0.5) * 10); // To adjust
+            dire.rotate((s.noise(this.innerPerlinCounter1) - 0.5) * 20); // To adjust
             if (s.dist(this.position.x, this.position.y, targetPoint.location.x, targetPoint.location.y) < targetPoint.radiusB) {
                 let attr = s.createVector(targetPoint.location.x - this.position.x, targetPoint.location.y - this.position.y);
                 let deg = (attr.heading() - dire.heading()) * s.map(s.dist(this.position.x, this.position.y, targetPoint.location.x, targetPoint.location.y), mesh.gridSize / 2, 0, 0.5, 1);
@@ -169,7 +169,7 @@ let sketch = function (s) {
             this._drawStep(this.stokeSize * (0.9 + s.noise(this.innerPerlinCounter4) * 0.2), 75 + 180 * (s.noise(this.innerPerlinCounter2) - 0.5), this.position);
 
             this.innerPerlinCounter2 += 0.5;
-            this.innerPerlinCounter1 += 0.001 + 0.029 * (s.noise(this.innerPerlinCounter3));
+            this.innerPerlinCounter1 += 0.005 + 0.029 * (s.noise(this.innerPerlinCounter3));
             this.innerPerlinCounter3 += 0.03;
             this.innerPerlinCounter4 += 0.03;
         }
