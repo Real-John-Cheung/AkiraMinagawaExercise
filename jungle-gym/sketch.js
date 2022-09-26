@@ -286,6 +286,7 @@ let sketch = function (s) {
     const gridSize = 50;
     let mesh = new Mesh(gridSize);
     let animationFinished = false;
+    let numSpace;
     s.setup = function () {
         canvas = s.createCanvas(1600, 1000);
         s.background(222, 217, 214);
@@ -298,6 +299,8 @@ let sketch = function (s) {
             pens[i] = new Pen(c, stokeSize, mesh);
             //pens[i]._debugDraw();
         }
+
+        numSpace = Math.floor(s.random(4, 12));
     }
 
     s.draw = function () {
@@ -307,7 +310,7 @@ let sketch = function (s) {
             const pen = pens[i];
             if (pen.life <= 0) {
 
-                if (mesh.avaliables.length < numOfPen * 4) {
+                if (mesh.avaliables.length < numOfPen * numSpace) {
                     pens.splice(i, 1);
                     i--;
                     continue;
@@ -349,6 +352,7 @@ let sketch = function (s) {
             //pens[i]._debugDraw();
         }
         animationFinished = false;
+        numSpace = Math.floor(s.random(4, 12));
         s.loop();
     }
 }
