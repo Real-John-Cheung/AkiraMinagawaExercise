@@ -11,6 +11,8 @@ let sketch = function (s) {
         [198, 171, 121], // yellow 2
     ];
 
+    let background;
+
     class Pen {
         constructor(color, stokeSize, mesh) {
             this.mesh = mesh;
@@ -289,7 +291,8 @@ let sketch = function (s) {
     let numSpace;
     s.setup = function () {
         canvas = s.createCanvas(1600, 1000);
-        s.background(222, 217, 214);
+        background = s.genBackground();
+        s.background(background);
         s.frameRate(30);
         Utils.applyScalling(div, canvas.canvas);
         s.angleMode(s.DEGREES);
@@ -337,7 +340,7 @@ let sketch = function (s) {
 
     s.mouseClicked = function () {
         if (animationFinished && s.mouseX > 0 && s.mouseX < s.width && s.mouseY > 0 && s.mouseY < s.height) {
-            s.background(222, 217, 214);
+            s.background(background);
             s.resetAnimation();
         }
     }
@@ -354,5 +357,18 @@ let sketch = function (s) {
         animationFinished = false;
         numSpace = Math.floor(s.random(4, 12));
         s.loop();
+    }
+
+    s.genBackground = function(){
+        let base = [222, 217, 214];
+        let pg = s.createImage(s.width, s.height);
+        for (let x = 0; x < pg.width; x++) {
+            for (let y = 0; y < pg.height; y++) {
+                let c = [base[0] + Math.floor(s.random(-5,5)), base[1] + Math.floor(s.random(-5,5)),base[2] + Math.floor(s.random(-5,5)), 255]
+                pg.set(x, y, c);
+            }
+        }
+        pg.updatePixels();
+        return pg;
     }
 }

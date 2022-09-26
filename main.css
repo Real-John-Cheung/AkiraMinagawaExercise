@@ -3,6 +3,7 @@
 
 body, html{
     width: 100%;
+    overflow-x: hidden;
 }
 
 .blockContainer{
@@ -35,18 +36,22 @@ body, html{
     display: flex;
 }
 
-.c1 {
+#c1 {
     width: 30%;
     margin-right: 5%;
 }
 
-.c2 {
+#c2 {
     width: 30%;
 }
 
-.c3 {
+#c3 {
     width: 30%;
     margin-left: 5%;
+}
+
+.c li{
+    margin-bottom: 5%;
 }
 
 .sketchTitle{
