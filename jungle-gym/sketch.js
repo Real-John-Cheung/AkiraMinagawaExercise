@@ -284,6 +284,8 @@ let sketch = function (s) {
     }
 
     const numOfPen = 100;
+    const delay = 2000;
+    let delayTimer = -1;
     let pens = new Array(numOfPen);
     const gridSize = 50;
     let mesh = new Mesh(gridSize);
@@ -328,7 +330,12 @@ let sketch = function (s) {
         }
         if (movedcount < 1) {
             animationFinished = true;
-            s.noLoop();
+            if (delayTimer === -1) {
+                delayTimer = s.millis();
+            }
+            if (s.millis() - delayTimer > delay) {
+                s.resetAnimation();
+            }
         }
         //mesh._debugDraw();
     }
@@ -340,12 +347,12 @@ let sketch = function (s) {
 
     s.mouseClicked = function () {
         if (animationFinished && s.mouseX > 0 && s.mouseX < s.width && s.mouseY > 0 && s.mouseY < s.height) {
-            s.background(background);
             s.resetAnimation();
         }
     }
 
     s.resetAnimation = function () {
+        s.background(background);
         mesh = new Mesh(gridSize);
         pens = new Array(numOfPen);
         for (let i = 0; i < pens.length; i++) {
@@ -356,7 +363,8 @@ let sketch = function (s) {
         }
         animationFinished = false;
         numSpace = Math.floor(s.random(4, 12));
-        s.loop();
+        delayTimer = -1;
+        //s.loop();
     }
 
     s.genBackground = function(){
