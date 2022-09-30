@@ -33,5 +33,31 @@
             </p>
         </div>
     </div>
-    <script>new p5(sketch, window.document.getElementsByClassName('sketchContainer')[0])</script>
+    <script>
+        const container = window.document.getElementsByClassName('sketchContainer')[0]
+        let thisP5 = new p5(sketch, container);
+        container.addEventListener('dblclick', (event) => {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement){
+                try {
+                    container.firstElementChild.requestFullscreen();
+                } catch (e) {
+                    try{
+                        container.firstElementChild.webkitRequestFullscreen();
+                    } catch (err) {
+                        console.error("fullScreenNotSupported");
+                    }
+                }
+            } else if (document.exitFullscreen || document.webkitExitFullscreen) {
+                try {
+                    document.exitFullscreen();
+                } catch (e){
+                    try {
+                        document.webkitExitFullscreen();
+                    } catch{
+                        console.error("unknownError");
+                    }
+                }
+            }
+        }, false); 
+    </script>
 </body>
