@@ -161,49 +161,74 @@ let sketch = function (s) {
         }
 
         drawMesh(maxDistance, overallAlpha) {
-            // s.push();
-            // s.blendMode(s.BURN);
-            // s.image(this.textureBuffer[0][2], 10, 10, this.textureBuffer[0][2].width * 10, this.textureBuffer[0][2].height * 10);
-            // s.pop();
             const { points, halfedges, triangles } = this.delaunay;
             const factor = 0.002, contrast = 2;
-            for (let i = 0, n = halfedges.length; i < n; ++i) {
-                const j = halfedges[i];
-                if (j < i) continue;
-                const ti = triangles[i];
-                const tj = triangles[j];
-                let dist = s.dist(points[ti * 2], points[ti * 2 + 1], points[tj * 2], points[tj * 2 + 1]);
-                if (dist > maxDistance) continue;
-                let colorPerlinValue1 = (s.noise(points[ti * 2] * factor + this.innerPerlinGap, points[ti * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
-                let colorPerlinValue2 = (s.noise(points[tj * 2] * factor + this.innerPerlinGap, points[tj * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
-                let baseC, strokeWeight;
-                if (colorPerlinValue1 > 0.1 && colorPerlinValue2 > 0.1) {
-                    baseC = [45 + Math.floor(s.random(-10, 10)), 64 + Math.floor(s.random(-10, 10)), 81 + Math.floor(s.random(-10, 10)), overallAlpha];
-                    strokeWeight = 3;
-                }
-                // else if (colorPerlinValue1 > 0.1 || colorPerlinValue2 > 0.1) {
-                //     baseC = [60 + Math.floor(s.random(-10, 10)), 70 + Math.floor(s.random(-10, 10)), 80 + Math.floor(s.random(-10, 10)), 255];
-                //     strokeWeight = 2;
-                // } 
-                else {
-                    baseC = [50 + Math.floor(s.random(-10, 10)), 50 + Math.floor(s.random(-10, 10)), 70 + Math.floor(s.random(-10, 10)), overallAlpha];
-                    strokeWeight = 1.5;
-                }
-                this.drawLine(points[ti * 2], points[ti * 2 + 1], points[tj * 2], points[tj * 2 + 1], baseC, strokeWeight);
-            }
+            // for (let i = 0, n = halfedges.length; i < n; ++i) {
+            //     const j = halfedges[i];
+            //     if (j < i) continue;
+            //     const ti = triangles[i];
+            //     const tj = triangles[j];
+            //     let dist = s.dist(points[ti * 2], points[ti * 2 + 1], points[tj * 2], points[tj * 2 + 1]);
+            //     if (dist > maxDistance) continue;
+            //     let colorPerlinValue1 = (s.noise(points[ti * 2] * factor + this.innerPerlinGap, points[ti * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
+            //     let colorPerlinValue2 = (s.noise(points[tj * 2] * factor + this.innerPerlinGap, points[tj * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
+            //     let baseC, strokeWeight;
+            //     if (colorPerlinValue1 > 0.1 && colorPerlinValue2 > 0.1) {
+            //         baseC = [45 + Math.floor(s.random(-10, 10)), 64 + Math.floor(s.random(-10, 10)), 81 + Math.floor(s.random(-10, 10)), overallAlpha];
+            //         strokeWeight = 3;
+            //     }
+            //     // else if (colorPerlinValue1 > 0.1 || colorPerlinValue2 > 0.1) {
+            //     //     baseC = [60 + Math.floor(s.random(-10, 10)), 70 + Math.floor(s.random(-10, 10)), 80 + Math.floor(s.random(-10, 10)), 255];
+            //     //     strokeWeight = 2;
+            //     // } 
+            //     else {
+            //         baseC = [50 + Math.floor(s.random(-10, 10)), 50 + Math.floor(s.random(-10, 10)), 70 + Math.floor(s.random(-10, 10)), overallAlpha];
+            //         strokeWeight = 1.5;
+            //     }
+            //     this.drawLine(points[ti * 2], points[ti * 2 + 1], points[tj * 2], points[tj * 2 + 1], baseC, strokeWeight);
+            // }
             //console.log(triangles[3]);
             for (let i = 0; i < Math.floor(triangles.length / 3); i++) {
                 const t0 = triangles[i * 3 + 0];
                 const t1 = triangles[i * 3 + 1];
                 const t2 = triangles[i * 3 + 2];
-                let colorPerlinValue0 = (s.noise(points[t0 * 2] * factor + this.innerPerlinGap, points[t0 * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
-                if (colorPerlinValue0 < 0.1) continue; 
-                let colorPerlinValue1 = (s.noise(points[t1 * 2] * factor + this.innerPerlinGap, points[t1 * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
-                if (colorPerlinValue1 < 0.1) continue; 
-                let colorPerlinValue2 = (s.noise(points[t2 * 2] * factor + this.innerPerlinGap, points[t2 * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
-                if (colorPerlinValue2 < 0.1) continue; 
 
-                if (this.textureBuffer.length < numOfFill && s.random() > 0.3 && this.filledIdx.indexOf(i) === -1) {
+                const h0 = halfedges[i * 3 + 0] < i * 3 + 0 ? undefined : triangles[halfedges[i * 3 + 0]];
+                const h1 = halfedges[i * 3 + 1] < i * 3 + 1 ? undefined : triangles[halfedges[i * 3 + 1]];
+                const h2 = halfedges[i * 3 + 2] < i * 3 + 2 ? undefined : triangles[halfedges[i * 3 + 2]];
+
+                let colorPerlinValue0 = (s.noise(points[t0 * 2] * factor + this.innerPerlinGap, points[t0 * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
+                let colorPerlinValue1 = (s.noise(points[t1 * 2] * factor + this.innerPerlinGap, points[t1 * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
+                let colorPerlinValue2 = (s.noise(points[t2 * 2] * factor + this.innerPerlinGap, points[t2 * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
+
+                const perlinValues = [colorPerlinValue0, colorPerlinValue1, colorPerlinValue2];
+                let isInDark = colorPerlinValue0 > 0.1 && colorPerlinValue1 > 0.1 && colorPerlinValue2 > 0.1;
+
+                [[h0, t0], [h1, t1], [h2, t2]].forEach((pair, idx) => {
+                    if (pair[0] !== undefined && pair[0] >= 0) {
+                        const ti = pair[0];
+                        const tj = pair[1];
+                        let dist = s.dist(points[ti * 2], points[ti * 2 + 1], points[tj * 2], points[tj * 2 + 1]);
+                        if (dist > maxDistance) { } else {
+                            let colorPerlinValuej = (s.noise(points[tj * 2] * factor + this.innerPerlinGap, points[tj * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
+                            let baseC, strokeWeight;
+                            if (perlinValues[idx] > 0.1 && colorPerlinValuej > 0.1) {
+                                baseC = [45 + Math.floor(s.random(-10, 10)), 64 + Math.floor(s.random(-10, 10)), 81 + Math.floor(s.random(-10, 10)), overallAlpha];
+                                strokeWeight = 3;
+                            }
+                            // else if (colorPerlinValue1 > 0.1 || colorPerlinValue2 > 0.1) {
+                            //     baseC = [60 + Math.floor(s.random(-10, 10)), 70 + Math.floor(s.random(-10, 10)), 80 + Math.floor(s.random(-10, 10)), 255];
+                            //     strokeWeight = 2;
+                            // } 
+                            else {
+                                baseC = [50 + Math.floor(s.random(-10, 10)), 50 + Math.floor(s.random(-10, 10)), 70 + Math.floor(s.random(-10, 10)), overallAlpha];
+                                strokeWeight = 1.5;
+                            }
+                            this.drawLine(points[ti * 2], points[ti * 2 + 1], points[tj * 2], points[tj * 2 + 1], baseC, strokeWeight);
+                        };
+                    }
+                })
+                if (isInDark && this.textureBuffer.length < numOfFill && s.random() > 0.3 && this.filledIdx.indexOf(i) === -1) {
                     this._generatePoly([[points[t0 * 2], points[t0 * 2 + 1]], [points[t1 * 2], points[t1 * 2 + 1]], [points[t2 * 2], points[t2 * 2 + 1]]], s.random(this.fillColor), i);
                 }
             }
@@ -353,7 +378,7 @@ let sketch = function (s) {
         canvas = s.createCanvas(1600, 1000);
         background = genBackground();
         //s.background(background);
-        s.frameRate(12);
+        s.frameRate(5);
         Utils.applyScalling(div, canvas.canvas);
 
         pointSet = new PointSet(numOfPoints, minDistance);
@@ -378,6 +403,7 @@ let sketch = function (s) {
         if (!skip) pointSet.drawMesh(100, overallAlpha);
         //s.image(foreground,0,0)
         pointSet.animation1();
+        //console.log(s.frameRate());
     }
 
     s.windowResized = function () {
