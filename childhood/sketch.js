@@ -4,7 +4,7 @@ let sketch = function (s) {
     const Delaunay = d3.Delaunay;
     let background;
 
-    class Point{
+    class Point {
         constructor(x, y, r, b) {
             this.initPosition = [x, y];
             this.currentPosition = [x, y];
@@ -35,8 +35,81 @@ let sketch = function (s) {
             this.innerPerlinTimer1 = 0;
             this.innerPerlinTimer2 = 0;
             this.innerPerlinGap = Math.floor(s.random(14400));
-            this.fillColor = [];
-            this.fillCore = [];
+            this.fillColor = [[80, 71, 0], [8, 24, 5], [37, 11, 14], [24, 14, 8], [2, 2, 1], [44, 36, 18], [50, 50, 50]];
+            this.filledIdx = [];
+            this.textureBuffer = []; //[[x,y,maskedImage, tri],]
+        }
+
+        _drawPoly(polygon, textureIdx, alpha) {
+            if (this.textureBuffer[textureIdx] === undefined) this._generatePoly(polygon, s.random(this.fillColor), textureIdx);
+            s.push();
+            s.blendMode(s.BURN);
+            s.tint(255, alpha)
+            s.image(this.textureBuffer[textureIdx][2], this.textureBuffer[textureIdx][0], this.textureBuffer[textureIdx][1]);
+            s.pop();
+        }
+
+        _generatePoly(polygon, color, triIdx) {
+            let xMin, yMin, xMax, yMax;
+            polygon.forEach(p => {
+                if (!xMin) xMin = p[0];
+                if (p[0] < xMin) xMin = p[0];
+                if (!xMax) xMax = p[0];
+                if (p[0] > xMax) xMax = p[0];
+                if (!yMin) yMin = p[1];
+                if (p[1] < yMin) yMin = p[1];
+                if (!yMax) yMax = p[1];
+                if (p[1] > yMax) yMax = p[1];
+            })
+            let img = s.createImage(Math.ceil(xMax - xMin), Math.ceil(yMax - yMin));
+            const xoffset = s.random(14400, 144000);
+            const yoffset = s.random(14400, 144000);
+            const factor = 0.2;
+            const contrast = 2;
+            for (let x = 0; x < img.width; x++) {
+                for (let y = 0; y < img.height; y++) {
+                    let noiseV = s.noise((x + xoffset) * factor, (y + yoffset) * factor)
+                    let alpha = (noiseV - 0.5) * contrast < -0.3 ? 0 : Math.floor(s.map((noiseV - 0.5) * contrast, -0.3, contrast / 2, 50, 255, true));
+                    if (alpha > 0) alpha = s.lerp(alpha, 255, 0.25);
+                    let c = s.color(color[0], color[1], color[2], alpha);
+                    img.set(x, y, c);
+                }
+            }
+            img.updatePixels();
+            let pg = s.createGraphics(Math.ceil(xMax - xMin), Math.ceil(yMax - yMin));
+            pg.fill(0);
+            pg.stroke(255, 50);
+            pg.strokeWeight(4);
+            pg.beginShape();
+            polygon.forEach(p => {
+                pg.vertex(p[0] - xMin, p[1] - yMin);
+            })
+            pg.endShape(s.CLOSE);
+            img.mask(pg);
+            this.textureBuffer.push([xMin, yMin, img, polygon, triIdx]);
+            this.filledIdx.push(triIdx);
+        }
+
+        _updateTextureBuffer() {
+            const factor = 0.002, contrast = 2;
+            for (let i = 0; i < this.textureBuffer.length; i++) {
+                const polygon = this.textureBuffer[i][3];
+                let shouldRemove = false;
+                for (let j = 0; j < polygon.length; j++) {
+                    const point = polygon[j];
+                    let colorPerlinValue = (s.noise(point[0] * factor + this.innerPerlinGap, point[1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
+                    if (colorPerlinValue <= 0.1) {
+                        shouldRemove = true;
+                        break;
+                    }
+                }
+                if (shouldRemove) {
+                    let idx = this.filledIdx.indexOf(this.textureBuffer[i][4]);
+                    if (idx > -1) this.filledIdx.splice(idx, 1);
+                    this.textureBuffer.splice(i, 1);
+
+                }
+            }
         }
 
         _initDelaunay() {
@@ -88,6 +161,10 @@ let sketch = function (s) {
         }
 
         drawMesh(maxDistance, overallAlpha) {
+            // s.push();
+            // s.blendMode(s.BURN);
+            // s.image(this.textureBuffer[0][2], 10, 10, this.textureBuffer[0][2].width * 10, this.textureBuffer[0][2].height * 10);
+            // s.pop();
             const { points, halfedges, triangles } = this.delaunay;
             const factor = 0.002, contrast = 2;
             for (let i = 0, n = halfedges.length; i < n; ++i) {
@@ -101,7 +178,7 @@ let sketch = function (s) {
                 let colorPerlinValue2 = (s.noise(points[tj * 2] * factor + this.innerPerlinGap, points[tj * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
                 let baseC, strokeWeight;
                 if (colorPerlinValue1 > 0.1 && colorPerlinValue2 > 0.1) {
-                    baseC = [55 + Math.floor(s.random(-10, 10)), 64 + Math.floor(s.random(-10, 10)), 81 + Math.floor(s.random(-10, 10)), overallAlpha];
+                    baseC = [45 + Math.floor(s.random(-10, 10)), 64 + Math.floor(s.random(-10, 10)), 81 + Math.floor(s.random(-10, 10)), overallAlpha];
                     strokeWeight = 3;
                 }
                 // else if (colorPerlinValue1 > 0.1 || colorPerlinValue2 > 0.1) {
@@ -114,6 +191,27 @@ let sketch = function (s) {
                 }
                 this.drawLine(points[ti * 2], points[ti * 2 + 1], points[tj * 2], points[tj * 2 + 1], baseC, strokeWeight);
             }
+            //console.log(triangles[3]);
+            for (let i = 0; i < Math.floor(triangles.length / 3); i++) {
+                const t0 = triangles[i * 3 + 0];
+                const t1 = triangles[i * 3 + 1];
+                const t2 = triangles[i * 3 + 2];
+                let colorPerlinValue0 = (s.noise(points[t0 * 2] * factor + this.innerPerlinGap, points[t0 * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
+                if (colorPerlinValue0 < 0.1) continue; 
+                let colorPerlinValue1 = (s.noise(points[t1 * 2] * factor + this.innerPerlinGap, points[t1 * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
+                if (colorPerlinValue1 < 0.1) continue; 
+                let colorPerlinValue2 = (s.noise(points[t2 * 2] * factor + this.innerPerlinGap, points[t2 * 2 + 1] * factor + this.innerPerlinGap, this.innerPerlinTimer2) - 0.5) * contrast;
+                if (colorPerlinValue2 < 0.1) continue; 
+
+                if (this.textureBuffer.length < numOfFill && s.random() > 0.3 && this.filledIdx.indexOf(i) === -1) {
+                    this._generatePoly([[points[t0 * 2], points[t0 * 2 + 1]], [points[t1 * 2], points[t1 * 2 + 1]], [points[t2 * 2], points[t2 * 2 + 1]]], s.random(this.fillColor), i);
+                }
+            }
+            this._updateTextureBuffer();
+            this.textureBuffer.forEach((p, i) => {
+                this._drawPoly(p[2], i, overallAlpha);
+            });
+            //console.log(this.textureBuffer.length);
         }
 
         drawLine(x1, x2, y1, y2, c, sw) {
@@ -222,12 +320,12 @@ let sketch = function (s) {
                             //let sqDist = [[0,Number.MAX_SAFE_INTEGER]]
                             if (sqDist[0][1] > minDistance * minDistance) {
                                 if (usingR !== r) {
-                                    if (s.random() > deductRatio) res.push(new Point(sample.x, sample.y, usingR/4, usingR <= r));
+                                    if (s.random() > deductRatio) res.push(new Point(sample.x, sample.y, usingR / 4, usingR <= r));
                                 } else {
                                     res.push(new Point(sample.x, sample.y, usingR / 4, usingR <= r));
                                 }
                                 if (res.length > numOfPoints) return res;
-                                
+
                                 grid[col + row * numOfCol] = sample;
                                 active.push(sample);
                                 tree.insert([sample.x, sample.y]);
@@ -247,6 +345,7 @@ let sketch = function (s) {
     const minDistance = 15;
     const fadeInOutTime = 1.5;
     const displayTimeEach = 60;
+    const numOfFill = 200;
     const fr = 12;
     let timer = 0;
     let pointSet;
