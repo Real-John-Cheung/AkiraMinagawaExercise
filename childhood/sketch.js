@@ -35,7 +35,7 @@ let sketch = function (s) {
             this.innerPerlinTimer1 = 0;
             this.innerPerlinTimer2 = 0;
             this.innerPerlinGap = Math.floor(s.random(14400));
-            this.fillColor = [[80, 71, 0], [8, 24, 5], [37, 11, 14], [24, 14, 8], [2, 2, 1], [44, 36, 18], [50, 50, 50]];
+            this.fillColor = [[100, 91, 20], [28, 44, 25], [57, 41, 34], [44, 34, 28], [22, 22, 21], [64, 56, 38], [70, 70, 70]];
             this.filledIdx = [];
             this.textureBuffer = []; //[[x,y,maskedImage, tri],]
         }
