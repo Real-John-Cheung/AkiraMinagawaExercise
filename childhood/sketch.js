@@ -1,3 +1,4 @@
+p5.disableFriendlyErrors = true;
 let sketch = function (s) {
     let div = window.document.getElementsByClassName('sketchContainer')[0];
     let canvas;
@@ -15,7 +16,7 @@ let sketch = function (s) {
         randomWalk() {
             const step = 1;
             if (this.moveableR > 0) {
-                let newPosition = [this.currentPosition[0] + s.random(-1, 1) * step, this.currentPosition[1] + s.random(-1, 1) * step];
+                let newPosition = [this.currentPosition[0] + (Math.random() * (2) - 1) * step, this.currentPosition[1] + (Math.random() * (2) - 1) * step];
                 if ((newPosition[0] - this.initPosition[0]) * (newPosition[0] - this.initPosition[0]) + (newPosition[1] - this.initPosition[1]) * (newPosition[1] - this.initPosition[1]) < this.moveableR * this.moveableR) {
                     this.currentPosition = [newPosition[0], newPosition[1]];
                 }
@@ -34,7 +35,7 @@ let sketch = function (s) {
             this.delaunay = this._initDelaunay();
             this.innerPerlinTimer1 = 0;
             this.innerPerlinTimer2 = 0;
-            this.innerPerlinGap = Math.floor(s.random(14400));
+            this.innerPerlinGap = Math.floor(Math.random() * (14400));
             this.fillColor = [[100, 91, 20], [28, 44, 25], [57, 41, 34], [44, 34, 28], [22, 22, 21], [64, 56, 38], [70, 70, 70]];
             this.filledIdx = [];
             this.textureBuffer = []; //[[x,y,maskedImage, tri],]
@@ -228,7 +229,7 @@ let sketch = function (s) {
                         };
                     }
                 })
-                if (isInDark && this.textureBuffer.length < numOfFill && s.random() > 0.3 && this.filledIdx.indexOf(i) === -1) {
+                if (isInDark && this.textureBuffer.length < numOfFill && Math.random() > 0.3 && this.filledIdx.indexOf(i) === -1) {
                     this._generatePoly([[points[t0 * 2], points[t0 * 2 + 1]], [points[t1 * 2], points[t1 * 2 + 1]], [points[t2 * 2], points[t2 * 2 + 1]]], s.random(this.fillColor), i);
                 }
             }
@@ -404,6 +405,10 @@ let sketch = function (s) {
         //s.image(foreground,0,0)
         pointSet.animation1();
         //console.log(s.frameRate());
+        // s.push();
+        // s.fill(0)
+        // s.text(s.frameRate(), 100, 100);
+        // s.pop();
     }
 
     s.windowResized = function () {
@@ -431,13 +436,13 @@ let sketch = function (s) {
                     //base = 248;
                     base = light;
                 } else if ((x + offset) % 4 === 0 || (y + offset) % 4 === 0) {
-                    if (s.random() > 0.3) {
+                    if (Math.random() > 0.3) {
                         base = Math.floor(s.random(strokeL, strokeH));
                     } else {
                         base = light;
                     }
                 } else {
-                    if (s.random() > 0.7) {
+                    if (Math.random() > 0.7) {
                         base = Math.floor(s.random(strokeL, strokeH));
                     } else {
                         base = light;
