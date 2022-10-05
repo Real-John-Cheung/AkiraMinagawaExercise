@@ -1,3 +1,4 @@
+p5.disableFriendlyErrors = true;
 let sketch = function (s) {
     let div = window.document.getElementsByClassName('sketchContainer')[0];
     let canvas;
@@ -117,8 +118,8 @@ let sketch = function (s) {
 
     class Branch {
         constructor(x, y) {
-            this.rootX = x;
-            this.rootY = y;
+            this.initRootX = x;
+            this.initRootY = y;
             this.numOfSubBranch = Math.floor(s.random(5, 8));
             this.bleeding = 5;
             this.rigidBody = undefined;
@@ -126,15 +127,15 @@ let sketch = function (s) {
             this.maskBuffer = undefined;
             this._createBranch(this.numOfSubBranch);
             //this._createBranch(1);
-            World.add(world, this.rigidBody);
+            World.add(world, this.rigidBody, { restitution: 1, friction: 0 });
             //this._debugDraw();
         }
 
         _debugDraw() {
             s.push();
             s.strokeWeight(10);
-            s.stroke(255, 0, 0);
-            s.point(this.rootX, this.rootY);
+            // s.stroke(255, 0, 0);
+            // s.point(this.initRootX, this.initRootY);
             s.stroke(0, 0, 255);
             s.point(this.rigidBody.position.x, this.rigidBody.position.y);
             s.strokeWeight(2);
@@ -145,15 +146,18 @@ let sketch = function (s) {
                 s.vertex(p.x, p.y);
             });
             s.endShape(s.CLOSE);
-            s.image(this.maskBuffer, this.rootX - this.bleeding, this.rootY - this.maskBuffer.height / 2);
-            s.image(this.renderBuffer, this.rootX - this.bleeding, this.rootY - this.renderBuffer.height / 2);
+            s.angleMode(s.RADIANS);
+            s.translate(this.rigidBody.position.x, this.rigidBody.position.y);
+            s.rotate(this.rigidBody.angle);
+            s.image(this.maskBuffer, -this.maskBuffer.width / 2, - this.maskBuffer.height / 2);
+            s.image(this.renderBuffer, -this.renderBuffer.width / 2, - this.renderBuffer.height / 2);
 
             s.pop();
         }
 
         _createBranch(n) {
             const strokeW = 10;
-            const sectionLength = 35;
+            const sectionLength = 30;
             let rigidBodyPointSet = [];
             let pg1 = s.createGraphics(sectionLength * n + 2 * this.bleeding, sectionLength * 2 + 2 * this.bleeding); //for mask
             let pg2 = s.createGraphics(sectionLength * n + 2 * this.bleeding, sectionLength * 2 + 2 * this.bleeding); //for yf
@@ -161,11 +165,8 @@ let sketch = function (s) {
             turtle.moveTo(this.bleeding, pg1.height / 2);
             for (let i = 0; i < n; i++) {
                 // upper
-                rigidBodyPointSet.push({ x: i * sectionLength, y: - strokeW / 2 });
-                rigidBodyPointSet.push({ x: (i + 1) * sectionLength, y: - sectionLength });
-                rigidBodyPointSet.push({ x: (i + 1) * sectionLength, y: - (sectionLength - strokeW) });
-                rigidBodyPointSet.push({ x: i * sectionLength + strokeW, y: - strokeW / 2 });
-                rigidBodyPointSet.push({ x: (i + 1) * sectionLength, y: - strokeW / 2 });
+                if (i === 0) rigidBodyPointSet.push({ x: i * sectionLength, y: - strokeW / 2 });
+                if (i === n - 1 || i === 0) rigidBodyPointSet.push({ x: (i + 1) * sectionLength, y: - sectionLength * 1 });
 
                 //turtle drawing
                 turtle.remember();
@@ -176,68 +177,145 @@ let sketch = function (s) {
                 turtle.return();
                 turtle.drawMid(pg1, sectionLength);
             }
-
-            for (let i = n - 1; i > -1; i--) {
-                // lower
-                rigidBodyPointSet.push({ x: (i + 1) * sectionLength, y: strokeW / 2 });
-                rigidBodyPointSet.push({ x: i * sectionLength + strokeW, y: strokeW / 2 });
-                rigidBodyPointSet.push({ x: (i + 1) * sectionLength, y: sectionLength - strokeW });
-                rigidBodyPointSet.push({ x: (i + 1) * sectionLength, y: sectionLength });
-                rigidBodyPointSet.push({ x: i * sectionLength, y: strokeW / 2 });
-            }
-            this.rigidBody = Bodies.fromVertices(this.rootX, this.rootY, [rigidBodyPointSet], {});
-            this.rootMassOffset = { x: this.rootX - this.rigidBody.bounds.min.x, y: 0 };
-            this.rootX = this.rigidBody.position.x - this.rootMassOffset.x;
+            rigidBodyPointSet.push({ x: n * sectionLength, y: sectionLength * 1 });
+            rigidBodyPointSet.push({ x: sectionLength, y: sectionLength * 1 });
+            rigidBodyPointSet.push({ x: 0, y: strokeW / 2 });
+            // for (let i = n - 1; i > -1; i--) {
+            //     // lower
+            //     rigidBodyPointSet.push({ x: (i + 1) * sectionLength, y: sectionLength * 1 });
+            //     if (i === 0) rigidBodyPointSet.push({ x: i * sectionLength, y: strokeW / 2 });
+            // }
+            this.rigidBody = Bodies.fromVertices(this.initRootX, this.initRootY, [rigidBodyPointSet], {});
+            this.rootMassOffset = { x: this.initRootX - this.rigidBody.bounds.min.x, y: 0 };
+            this.initRootX = this.rigidBody.position.x - this.rootMassOffset.x;
+            this.initRootY = this.rigidBody.position.y;
             this.maskBuffer = pg1;
             this.renderBuffer = pg2;
             turtle.reset();
         }
 
         render() {
-            let cornerX = this.rootX - this.bleeding;
-            let cornerY = this.rootY - this.renderBuffer.height / 2;
             s.push();
             //s.blendMode(s.HARD_LIGHT);
+            s.angleMode(s.RADIANS);
+            s.translate(this.rigidBody.position.x, this.rigidBody.position.y);
+            s.rotate(this.rigidBody.angle);
+            let cornerX = - this.renderBuffer.width / 2;
+            let cornerY = - this.renderBuffer.height / 2;
             s.image(this.renderBuffer, cornerX, cornerY);
             s.pop();
         }
+
+        // update() {
+        //     const outage = this.renderBuffer.width / 2;
+        //     if (this.rigidBody.position.x < -outage) this.rigidBody.position.x = s.width + outage;
+        //     if (this.rigidBody.position.y < -outage) this.rigidBody.position.y = s.height + outage;
+        //     if (this.rigidBody.position.x > s.width + outage) this.rigidBody.position.x = - outage;
+        //     if (this.rigidBody.position.y > s.height + outage) this.rigidBody.position.y = - outage;
+        // }
+
+        applyF(ff) {
+            const xx = Math.floor(this.rigidBody.position.x / scl);
+            const yy = Math.floor(this.rigidBody.position.y / scl);
+            const f = ff[xx + yy * cols];
+            if (!f) return
+            const mm = this.rigidBody.mass * 0.0001
+            let force = { x: f.x * mm, y: f.y * mm };
+            Body.applyForce(this.rigidBody, {x: xx, y: yy}, force)
+        }
     }
 
-    const branchesNo = 40;
+    const branchesNo = 100;
     let branches = [];
+    // s.background = function (img) {
+    //     s.image(img, -s.width / 2, -s.height / 2);
+    // }
+    let flowField, scl = 50, cols, rows, inc = 0.1, magInc = 0.02, zOff = 0, magOff = 0, incStart = 0.1;
     s.setup = function () {
         canvas = s.createCanvas(1600, 1000);
         s.angleMode(s.DEGREES);
-        s.frameRate(30);
+        s.frameRate(24);
         Utils.applyScalling(div, canvas.canvas);
         turtle = new Turtle();
         background = genBackground();
         texture = genTexture();
         s.background(background);
         for (let i = 0; i < branchesNo; i++) {
-            branches.push(new Branch(200 + 300 * (i % 5), 100 + 100 *  Math.floor( i / 5)))
+            // branches.push(new Branch(300 * (i % 5), 50 * Math.floor(i / 5)))
+            branches.push(new Branch(s.random(s.width), s.random(s.height)));
         }
+        //walls
+        World.add(world, Bodies.rectangle(-50, s.height / 2, 100, s.height + 20, { isStatic: true, restitution: 1, friction: 0 }));
+        World.add(world, Bodies.rectangle(s.width / 2, -50, s.width + 20, 100, { isStatic: true, restitution: 1, friction: 0 }));
+        World.add(world, Bodies.rectangle(s.width + 50, s.height / 2, 100, s.height + 20, { isStatic: true, restitution: 1, friction: 0 }));
+        World.add(world, Bodies.rectangle(s.width / 2, s.height + 50, s.width + 20, 100, { isStatic: true, restitution: 1, friction: 0 }));
+        // ff
+        cols = Math.floor(s.width / scl);
+        rows = Math.floor(s.height / scl);
+        flowField = new Array(rows * cols);
+        // forces
+        engine.gravity.scale = 0;
+        engine.gravity.x = 0;
+        engine.gravity.y = 0;
+        branches.forEach(b => {
+            Body.setAngle(b.rigidBody, s.random(0, 2 * Math.PI));
+        })
     }
 
     s.draw = function () {
+        s.background(background);
+        updateFF();
         let pg = s.createGraphics(s.width, s.height);
-        let toBeMasked = s.createImage(s.width, s.height);
-        toBeMasked.copy(texture, 0, 0, s.width, s.height, 0, 0, s.width, s.height);
-        branches.forEach(b => { 
-            let cornerX = b.rootX - b.bleeding;
-            let cornerY = b.rootY - b.maskBuffer.height / 2;
-            pg.image(b.maskBuffer, cornerX, cornerY);
+        let toBeMasked = texture.get();
+        branches.forEach(b => {
+            pg.push();
+            pg.angleMode(s.RADIANS);
+            pg.translate(b.rigidBody.position.x, b.rigidBody.position.y);
+            pg.rotate(b.rigidBody.angle);
+            pg.image(b.maskBuffer,- b.renderBuffer.width / 2,- b.renderBuffer.height / 2);
+            pg.pop();
         })
         toBeMasked.mask(pg);
         s.image(toBeMasked, 0, 0);
-        branches.forEach(b => { 
+        branches.forEach(b => {
             b.render();
+            b.applyF(flowField);
+            //b._debugDraw();
         })
+        // engine xy
+        // engine.gravity.x = (s.noise(engineGXNoiseC) - 0.5) * 2;
+        // engine.gravity.y = (s.noise(engineGYNoiseC) - 0.5) * 2;
+
+        // engineGXNoiseC += Math.random() < 0.9 ? 0.03 : 1;
+        // engineGYNoiseC += Math.random() < 0.9 ? 0.03 : 1;
+        Engine.update(engine);
     }
 
     s.windowResized = function () {
         Utils.applyScalling(div, canvas.canvas);
         //s.background(background);
+    }
+
+    updateFF = function () {
+        const db = true;
+        let yoff = 0;
+        for (let y = 0; y < rows; y++) {
+            let xoff = 0;
+            for (let x = 0; x < cols; x++) {
+                let idx = x + y * cols;
+                let angle = s.noise(xoff, yoff, zOff) * Math.PI * 2;
+                s.angleMode(s.RADIANS);
+                let v = {x: Math.cos(angle), y: Math.sin(angle)};
+                let m = s.map(s.noise(xoff, yoff, magOff), 0, 1, -2, -2);
+                v.x *= m;
+                v.y *= m;
+                flowField[idx] = v;
+                xoff += inc;
+            }
+            yoff += inc
+        }
+        magOff += magInc;
+        zOff += incStart;
     }
 
     genBackground = function () {
