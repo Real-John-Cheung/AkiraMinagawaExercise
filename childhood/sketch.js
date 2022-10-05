@@ -7,8 +7,8 @@ let sketch = function (s) {
 
     class Point {
         constructor(x, y, r, b) {
-            this.initPosition = [x, y];
-            this.currentPosition = [x, y];
+            this.initPosition = [Math.round(x), Math.round(y)];
+            this.currentPosition = [Math.round(x), Math.round(y)];
             this.moveableR = r;
             this.onSmallTri = b;
         }
