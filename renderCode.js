@@ -8,15 +8,6 @@ function docReady(fn) {
     }
 }
 
-function caculateFontSize(txt) {
-    const js = document.getElementById("js");
-    const widthStr = window.getComputedStyle(js).width.toLowerCase();
-    const width = parseFloat(widthStr.replace("px", ""));
-    const heightStr = window.getComputedStyle(js).height.toLowerCase();
-    const height = parseFloat(heightStr.replace("px", ""));
-
-}
-
 function adjustFontSize() {
     const maxAttampts = 999;
     let attampts = 0;
