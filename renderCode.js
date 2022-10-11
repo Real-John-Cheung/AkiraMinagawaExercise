@@ -25,7 +25,7 @@ function adjustFontSize() {
             wh = wrapper.clientHeight;
         }
     } else {
-        while (attampts < maxAttampts && wh < jsHeight) {
+        while (attampts < maxAttampts && wh <= jsHeight) {
             attampts++;
             currentFs += 0.05;
             wrapper.style.fontSize = (currentFs) + "px";
