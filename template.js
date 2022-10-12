@@ -15,7 +15,6 @@ let sketch = function (s) {
 
     s.windowResized = function () {
         Utils.applyScalling(div, canvas.canvas);
-        s.background(217, 212, 209);
     }
     
 }
