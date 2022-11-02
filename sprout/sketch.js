@@ -16,7 +16,7 @@ let sketch = function (s) {
             this.y = 0;
             this.gen = generation || 0;
             this.width = 10 + Math.random() * 10;
-            this.step = 5;
+            this.step = 3;
             this.end = Math.random() > s.map(this.gen, 0, 5, 1, 0.3, true);
             this.length = s.random(100, 150);
             if (!this.end) this.breachPoint = [];
@@ -87,7 +87,7 @@ let sketch = function (s) {
 
         drawEnd() {
             const col = [156, 180, 190];
-            let ballsize = Math.min(s.random(50, 70), this.width * s.random(3, 5));
+            let ballsize = Math.min(s.random(30, 50), this.width * s.random(3, 5));
             let cx = this.x + (ballsize * 0.5) * s.cos(this.currentAngle);
             let cy = this.y + (ballsize * 0.5) * s.sin(this.currentAngle);
             const ballnum = Math.floor(s.random(5, 7));
@@ -110,8 +110,8 @@ let sketch = function (s) {
         drawF() {
             const c1 = [118, 7, 0];
             const c2 = [40, 31, 24];
-            let cx = this.x + 60 * s.cos(this.currentAngle);
-            let cy = this.y + 60 * s.sin(this.currentAngle);
+            let cx = this.x + 40 * s.cos(this.currentAngle);
+            let cy = this.y + 40 * s.sin(this.currentAngle);
             const n = Math.floor(s.random(3, 5));
             let gap = 15;
             let c = - (n * gap) / 2;
@@ -145,7 +145,7 @@ let sketch = function (s) {
         canvas = s.createCanvas(1600, 1000);
         background = genBackground();
         s.background(background);
-        s.frameRate(12);
+        s.frameRate(30);
         s.blendMode(s.BURN);
         s.rectMode(s.CENTER);
         s.angleMode(s.DEGREES);
