@@ -21,6 +21,13 @@ let sketch = function (s) {
         }
     }
 
+    class Figure{
+        constructor(location) {
+            this.cx = location.x;
+            this.cy = location.y;
+        }
+    }
+
     let background;
     s.setup = function () {
         canvas = s.createCanvas(1600, 1000);
@@ -43,7 +50,7 @@ let sketch = function (s) {
         for (let x = 0; x < bg.width; x++) {
             for (let y = 0; y < bg.height; y++) {
                 if (Math.random() > 0.7) {
-                    let c = [cbase[0] + Math.floor(s.random(-2, 2)), cbase[1] + Math.floor(s.random(-2, 2)), cbase[2] + Math.floor(s.random(-2, 2)), cbase[3]];
+                    let c = [cbase[0] + Math.floor(s.random(-5, 5)), cbase[1] + Math.floor(s.random(-5, 5)), cbase[2] + Math.floor(s.random(-5, 5)), cbase[3]];
                     bg.set(x, y, c)
                 } else {
                     bg.set(x, y, cbase);
