@@ -35,8 +35,26 @@ function adjustFontSize() {
 }
 
 go = async function () {
-    let text = await fetch("./sketch.js").then(rep => rep.text());
-    text = minify(text).code;
+    let ht = await fetch("./index.html").then(resp => resp.text());
+    tf = ht.match(/<script.*?src="(.*?)"/gmi);
+    for (let i = 0; i < tf.length; i++) {
+        if (!tf[i].includes("src") || tf[i].includes("https:") || tf[i].includes("utils.js")) {
+            tf.splice(i, 1);
+            i--
+            continue;
+        } 
+        tf[i] = tf[i].replace(/<script.*?src="(.*?)"/gi, "$1").trim();
+    }
+    let rc = {};
+    let fileno = 1;
+    for (let i = 0; i < tf.length; i++) {
+        let c = await fetch(tf[i]).then(rep => rep.text());
+        let fileName = "file" + fileno;
+        rc[fileName] = c;
+        fileno++;
+    }
+    console.log(tf);
+    let text = minify(rc, {compress: {passes: 2}}).code;
     //console.log(text);
     const codeContainer = document.getElementsByClassName("language-javascript")[0]
     codeContainer.textContent = text;
