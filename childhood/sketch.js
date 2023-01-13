@@ -38,11 +38,11 @@ let sketch = function (s) {
             this.innerPerlinGap = Math.floor(Math.random() * (14400));
             this.fillColor = [[100, 91, 20], [28, 44, 25], [57, 41, 34], [44, 34, 28], [22, 22, 21], [64, 56, 38], [70, 70, 70]];
             this.filledIdx = [];
-            this.textureBuffer = []; //[[x,y,maskedImage, tri],]
+            this.textureBuffer = []; //[[x,y,maskedImage, polygon, tri],]
         }
 
-        _drawPoly(polygon, textureIdx, alpha) {
-            if (this.textureBuffer[textureIdx] === undefined) this._generatePoly(polygon, s.random(this.fillColor), textureIdx);
+        _drawPoly(textureIdx, alpha) {
+            //if (this.textureBuffer[textureIdx] === undefined) this._generatePoly(polygon, s.random(this.fillColor), textureIdx);
             s.push();
             s.blendMode(s.BURN);
             s.tint(255, alpha)
@@ -51,6 +51,7 @@ let sketch = function (s) {
         }
 
         _generatePoly(polygon, color, triIdx) {
+            //console.log(polygon);
             let xMin, yMin, xMax, yMax;
             polygon.forEach(p => {
                 if (!xMin) xMin = p[0];
@@ -235,7 +236,7 @@ let sketch = function (s) {
             }
             this._updateTextureBuffer();
             this.textureBuffer.forEach((p, i) => {
-                this._drawPoly(p[2], i, overallAlpha);
+                this._drawPoly(i, overallAlpha);
             });
             //console.log(this.textureBuffer.length);
         }
